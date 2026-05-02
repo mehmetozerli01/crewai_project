@@ -1,0 +1,7 @@
+# CrewAI Tech Analytics (Fırat Üniversitesi / Mehmet Özerli)
+# groq/ model kimliği için CrewAI → LiteLLM yolu (litellm gerekli)
+crewai>=0.100.0
+python-dotenv>=1.0.0
+langchain-community>=0.3.0
+duckduckgo-search>=6.0.0
+litellm>=1.0.0
