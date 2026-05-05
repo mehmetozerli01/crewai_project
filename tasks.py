@@ -79,6 +79,11 @@ class TechAnalysisTasks:
                 "kalitede **tek bir Markdown (.md) belge** üret. Profesyonel üslup; başlık "
                 "hiyerarşisi (# ## ###), giriş, özet, SWOT ve fizibiliteyi tablo(lar) ile "
                 "destekle, sonuç ve (varsa) kısa referans/kaynak notları ekle.\n\n"
+                "Dil kuralı: Teknik terimler dışında İngilizce kelime kullanma; metin tamamen "
+                "akademik Türkçe olmalı.\n\n"
+                "Raporun en altına şu notu değişmeden ekle:\n"
+                "'Bu rapor Fırat Üniversitesi Yazılım Mühendisliği Bölümü için Mehmet Özerli "
+                "tarafından CrewAI ve Groq altyapısı kullanılarak otonom olarak üretilmiştir.'\n\n"
                 f"Tam dosya yolu: `{out_path}` — çıktı bu dosyaya yazılacak."
             ),
             expected_output=(

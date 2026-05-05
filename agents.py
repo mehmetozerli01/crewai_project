@@ -6,6 +6,7 @@ kurumsal ve profesyonel düzeyde korunmuştur.
 """
 
 import os
+from pathlib import Path
 from typing import List, Optional
 
 from crewai import Agent, LLM
@@ -13,21 +14,26 @@ from dotenv import load_dotenv
 
 from tools import InternetSearchTool
 
-load_dotenv()
+load_dotenv(dotenv_path=Path(__file__).resolve().parent / ".env")
 
-def _resolve_model() -> str:
-    """OPENAI_MODEL_NAME env tam ad veya sürüm adı olabilir; Groq için groq/ öneki gerekir."""
-    raw = (os.getenv("OPENAI_MODEL_NAME") or "llama-3.3-70b-versatile").strip()
-    if raw.lower().startswith("groq/"):
-        return raw
-    return f"groq/{raw}"
 
+def _get_required_groq_key() -> str:
+    """Read GROQ_API_KEY from .env/environment and normalize common formatting issues."""
+    raw_key = (os.getenv("GROQ_API_KEY") or "").strip().strip('"').strip("'")
+    if not raw_key or raw_key.lower() in {"your_groq_api_key_here", "changeme", "replace_me"}:
+        raise ValueError(
+            "GROQ_API_KEY bulunamadi veya gecersiz. Lutfen .env dosyasina gecerli bir Groq API key yazin."
+        )
+    # Ensure downstream libs (LiteLLM/CrewAI) read the same normalized key.
+    os.environ["GROQ_API_KEY"] = raw_key
+    return raw_key
 
 def _default_llm() -> LLM:
     """Groq: model groq/llama-3.3-70b-versatile (LiteLLM); OPENAI_API_BASE isteğe bağlı."""
+    groq_key = _get_required_groq_key()
     return LLM(
-        model=_resolve_model(),
-        api_key=os.getenv("GROQ_API_KEY"),
+        model="groq/llama-3.3-70b-versatile",
+        api_key=groq_key,
         base_url=os.getenv("OPENAI_API_BASE", "https://api.groq.com/openai/v1"),
     )
 
@@ -56,7 +62,8 @@ class TechAnalysisAgents:
                 "sistematik arama yapar; resmi sürüm notları, standartlar ve güvenilir topluluk "
                 "kaynaklarını önceliklendirirsiniz. Her bulgu, Mehmet Özerli başkanlığındaki jüri "
                 "masasında savunulabilir, kaynak gösterilebilir ve tekrarlanabilir özetlere "
-                "dönüştürülür."
+                "dönüştürülür. Kesinlikle %100 Türkçe cevap ver, teknik terimler hariç asla "
+                "İngilizce kelime kullanma."
             ),
             tools=self._search,
             llm=self._llm,
@@ -78,7 +85,8 @@ class TechAnalysisAgents:
                 "savunması düzeyinde sunarsınız: teknik borç, entegrasyon karmaşıklığı, güvenlik "
                 "ve uyumluluk, operasyon maliyeti, ekip yetkinliği ve ölçeklenebilirlik. SWOT ve "
                 "fizibilite bölümleri, Prof. Dr. Mehmet Özerli başkanlığındaki jüri önünde "
-                "kanıta dayalı, ölçülebilir ve tutarlı olmalıdır."
+                "kanıta dayalı, ölçülebilir ve tutarlı olmalıdır. Kesinlikle %100 Türkçe cevap ver, "
+                "teknik terimler hariç asla İngilizce kelime kullanma."
             ),
             tools=[],
             llm=self._llm,
@@ -101,7 +109,8 @@ class TechAnalysisAgents:
                 "Üniversitesi mühendislik geleneği içindeki yeri ile CrewAI Tech Analytics çoklu "
                 "ajan mimarisi, gerektiğinde meta bilgi veya giriş bölümünde şeffaf biçimde "
                 "yer alır; böylece jüri, metnin bu kurumsal çalışmaya özgü olduğunu açıkça "
-                "teyit edebilir."
+                "teyit edebilir. Kesinlikle %100 Türkçe cevap ver, teknik terimler hariç asla "
+                "İngilizce kelime kullanma."
             ),
             tools=[],
             llm=self._llm,
